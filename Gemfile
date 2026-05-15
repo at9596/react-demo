@@ -64,3 +64,7 @@ group :test do
 end
 
 gem "vite_rails", "~> 3.11"
+
+gem "sidekiq", "~> 8.1"
+gem "sidekiq-cron"
+gem "sidekiq-unique-jobs"

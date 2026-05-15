@@ -1,0 +1,2 @@
+class JobMetricSnapshot < ApplicationRecord
+end

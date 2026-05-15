@@ -1,0 +1,5 @@
+#  execute this job every minute
+metric_snapshot_job:
+  cron: "* * * * *"
+  class: "MatricSnapshotJob"
+  queue: default

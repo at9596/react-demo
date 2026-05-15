@@ -1,4 +1,4 @@
-class ApplicationJob
+class BaseJob
   include Sidekiq::Job
 
   sidekiq_options lock: :until_executed
