@@ -1,0 +1,49 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+      - SECRET_KEY_BASE=dummy
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - sqlite_storage:/rails/storage
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: bash -c "bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p 3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  sidekiq:
+    build: .
+    environment:
+      - RAILS_ENV=development
+      - SECRET_KEY_BASE=dummy
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - sqlite_storage:/rails/storage
+    depends_on:
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+  redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  sqlite_storage:
